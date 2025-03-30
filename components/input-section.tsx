@@ -1,22 +1,36 @@
-'use client'
-import React, { useState } from 'react'
-import { Input } from './ui/input'
-import { Button } from './ui/button'
-import { Combobox } from './query/combobox'
+"use client";
+import React from "react";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Combobox } from "./query/combobox";
+import { useAtomValue, useSetAtom } from "jotai";
+import { contractAtom, tokenAtom } from "@/lib/atoms";
 
 const InputSection = () => {
-    const [tokenId, setTokenId] = useState(0)
+    const setContract = useSetAtom(contractAtom);
+
+    const tokenValue = useAtomValue(tokenAtom);
+    const setToken = useSetAtom(tokenAtom)
+
     return (
-        <div className='flex flex-row gap-6 items-center justify-center'>
+        <div className="flex flex-row gap-6 items-center justify-center">
             <Combobox />
-            <Input placeholder='enter contract address' />
+            <Input placeholder="enter contract address" />
             <p>token id: </p>
-            <Button onClick={() => setTokenId(tokenId + 1)}>+</Button>
-            <Input placeholder='token id' type='number' value={tokenId} className='w-2/5' onChange={() => { }} />
-            <Button onClick={() => setTokenId(tokenId - 1)}>-</Button>
+            <Button onClick={() => setToken((token) => (token || 0) + 1)}>+</Button>
+            <Input
+                placeholder="token id"
+                type="number"
+                value={tokenValue || 0}
+                className="w-2/5"
+                onChange={(e) => {
+                    setContract(e.target.value as `0x${string}`);
+                }}
+            />
+            <Button onClick={() => setToken((token) => (token || 0) - 1)}>-</Button>
             <Button>query</Button>
         </div>
-    )
-}
+    );
+};
 
-export default InputSection
+export default InputSection;

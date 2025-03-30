@@ -18,33 +18,35 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { useSetAtom } from "jotai"
+import { chainAtom } from "@/lib/atoms"
+import { baseSepolia, optimismSepolia, polygonAmoy, sepolia } from "wagmi/chains"
+import { Chain } from "viem"
 
-const frameworks = [
+const chains = [
     {
-        value: "sepolia",
+        value: sepolia,
         label: "sepolia",
     },
     {
-        value: "base sepolia",
-        label: "SvelteKit",
+        value: baseSepolia,
+        label: "base sepolia",
     },
     {
-        value: "nuxt.js",
-        label: "Nuxt.js",
+        value: optimismSepolia,
+        label: "optimism sepolia",
     },
     {
-        value: "remix",
-        label: "Remix",
-    },
-    {
-        value: "astro",
-        label: "Astro",
+        value: polygonAmoy,
+        label: "polygon amoy",
     },
 ]
 
 export function Combobox() {
     const [open, setOpen] = React.useState(false)
-    const [value, setValue] = React.useState("")
+    const [selectedChain, setSelectedChain] = React.useState<string>(baseSepolia.name)
+
+    const setChain = useSetAtom(chainAtom)
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -55,8 +57,8 @@ export function Combobox() {
                     aria-expanded={open}
                     className="w-[200px] justify-between"
                 >
-                    {value
-                        ? frameworks.find((framework) => framework.value === value)?.label
+                    {selectedChain
+                        ? chains.find((chain) => chain.value.name === selectedChain)?.label
                         : "Select Chain"}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
@@ -67,20 +69,24 @@ export function Combobox() {
                     <CommandList>
                         <CommandEmpty>No framework found.</CommandEmpty>
                         <CommandGroup>
-                            {frameworks.map((framework) => (
+                            {chains.map((chain) => (
                                 <CommandItem
-                                    key={framework.value}
-                                    value={framework.value}
-                                    onSelect={(currentValue) => {
-                                        setValue(currentValue === value ? "" : currentValue)
-                                        setOpen(false)
+                                    key={chain.value.id}
+                                    value={chain.value.name}
+                                    onSelect={(currentValue: string) => {
+                                        setSelectedChain(currentValue);
+                                        const selectedChainObj = chains.find(c => c.value.name === currentValue)?.value;
+                                        if (selectedChainObj) {
+                                            setChain(selectedChainObj as Chain);
+                                        }
+                                        setOpen(false);
                                     }}
                                 >
-                                    {framework.label}
+                                    {chain.label}
                                     <Check
                                         className={cn(
                                             "ml-auto",
-                                            value === framework.value ? "opacity-100" : "opacity-0"
+                                            selectedChain === chain.value.name ? "opacity-100" : "opacity-0"
                                         )}
                                     />
                                 </CommandItem>
