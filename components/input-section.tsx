@@ -27,7 +27,7 @@ const InputSection = () => {
                     setContract(e.target.value as `0x${string}`);
                 }}
             />
-            <Button onClick={() => setToken((token) => (token || 0) - 1)}>-</Button>
+            <Button onClick={() => setToken((token) => ((token || 0) - 1) >= 0 ? ((token || 0) - 1) : token)}>-</Button>
             <Button>query</Button>
         </div>
     );
