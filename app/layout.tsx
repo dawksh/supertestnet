@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import TanstackProvider from "@/components/tanstack-provider";
+import { Toaster } from "@/components/ui/sonner"
 
 
 const geistSans = Inter({
@@ -31,6 +32,7 @@ export default function RootLayout({
         disableTransitionOnChange
       >
           <TanstackProvider>
+            <Toaster />
             {children}
           </TanstackProvider>
         </ThemeProvider>

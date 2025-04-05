@@ -6,6 +6,7 @@ import { Combobox } from "./query/combobox";
 import { useAtomValue, useSetAtom } from "jotai";
 import { chainAtom, contractAtom, tokenAtom, uriAtom } from "@/lib/atoms";
 import { createPublicClient, erc721Abi, http } from "viem";
+import { toast } from "sonner";
 
 const InputSection = () => {
     const contractValue = useAtomValue(contractAtom);
@@ -19,6 +20,11 @@ const InputSection = () => {
     const setUri = useSetAtom(uriAtom)
 
     const handleQuery = async () => {
+
+        if (!contractValue) toast.error("no contract provided")
+        if (!tokenValue) toast.error("no token provided")
+        if (!chainValue) toast.error("no chain selected")
+
         const publicClient = createPublicClient({
             chain: chainValue!,
             transport: http()
@@ -29,8 +35,16 @@ const InputSection = () => {
             functionName: "tokenURI",
             args: [BigInt(tokenValue!)]
         })
-        const jsonURI = await fetch(uri).then(res => res.json())
-        setUri(jsonURI)
+        if (uri.startsWith("https://")) {
+            const jsonURI = await fetch(uri).then(res => res.json())
+            setUri(jsonURI)
+        } else if (uri.startsWith("ipfs://")) {
+            const jsonURI = await fetch(uri.replace("ipfs://", "https://ipfs.io/ipfs/")).then(res => res.json())
+            setUri(jsonURI)
+        } else {
+            console.log(uri)
+            // setUri(JSON.parse(uri))
+        }
     }
 
     return (
@@ -49,7 +63,7 @@ const InputSection = () => {
                 }}
             />
             <Button onClick={() => setToken((token) => ((token || 0) - 1) >= 0 ? ((token || 0) - 1) : token)}>-</Button>
-            <Button onClick={handleQuery}>query</Button>
+            <Button className="cursor-pointer" onClick={handleQuery}>query</Button>
         </div>
     );
 };
