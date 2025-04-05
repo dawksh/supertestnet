@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover"
 import { useSetAtom } from "jotai"
 import { chainAtom } from "@/lib/atoms"
-import { baseSepolia, optimismSepolia, polygonAmoy, sepolia } from "wagmi/chains"
+import { base, baseSepolia, optimismSepolia, polygonAmoy, sepolia } from "wagmi/chains"
 import { Chain } from "viem"
 
 const chains = [
@@ -39,6 +39,10 @@ const chains = [
     {
         value: polygonAmoy,
         label: "polygon amoy",
+    },
+    {
+        value: base,
+        label: "base",
     },
 ]
 
