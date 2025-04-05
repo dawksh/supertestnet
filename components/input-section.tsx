@@ -22,29 +22,36 @@ const InputSection = () => {
     const handleQuery = async () => {
 
         if (!contractValue) toast.error("no contract provided")
-        if (!tokenValue) toast.error("no token provided")
+        if (tokenValue < -1) toast.error("no token provided")
         if (!chainValue) toast.error("no chain selected")
 
-        const publicClient = createPublicClient({
-            chain: chainValue!,
-            transport: http()
-        })
-        const uri = await publicClient.readContract({
-            address: contractValue as `0x${string}`,
-            abi: erc721Abi,
-            functionName: "tokenURI",
-            args: [BigInt(tokenValue!)]
-        })
-        if (uri.startsWith("https://")) {
-            const jsonURI = await fetch(uri).then(res => res.json())
-            setUri(jsonURI)
-        } else if (uri.startsWith("ipfs://")) {
-            const jsonURI = await fetch(uri.replace("ipfs://", "https://ipfs.io/ipfs/")).then(res => res.json())
-            setUri(jsonURI)
-        } else {
-            console.log(uri)
-            // setUri(JSON.parse(uri))
+        try {
+
+            const publicClient = createPublicClient({
+                chain: chainValue!,
+                transport: http()
+            })
+            const uri = await publicClient.readContract({
+                address: contractValue as `0x${string}`,
+                abi: erc721Abi,
+                functionName: "tokenURI",
+                args: [BigInt(tokenValue!)]
+            })
+            if (uri.startsWith("https://")) {
+                const jsonURI = await fetch(uri).then(res => res.json())
+                setUri(jsonURI)
+            } else if (uri.startsWith("ipfs://")) {
+                const jsonURI = await fetch(uri.replace("ipfs://", "https://ipfs.io/ipfs/")).then(res => res.json())
+                setUri(jsonURI)
+            } else {
+                toast.info("uri type not supported")
+                // setUri(JSON.parse(uri))
+            }
+        } catch (error) {
+            toast.error("an error occurred, please check console")
+            console.log(error)
         }
+
     }
 
     return (

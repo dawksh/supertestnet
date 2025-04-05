@@ -20,35 +20,13 @@ import {
 } from "@/components/ui/popover"
 import { useSetAtom } from "jotai"
 import { chainAtom } from "@/lib/atoms"
-import { base, baseSepolia, optimismSepolia, polygonAmoy, sepolia } from "wagmi/chains"
 import { Chain } from "viem"
+import { chains } from "@/lib/config"
 
-const chains = [
-    {
-        value: sepolia,
-        label: "sepolia",
-    },
-    {
-        value: baseSepolia,
-        label: "base sepolia",
-    },
-    {
-        value: optimismSepolia,
-        label: "optimism sepolia",
-    },
-    {
-        value: polygonAmoy,
-        label: "polygon amoy",
-    },
-    {
-        value: base,
-        label: "base",
-    },
-]
 
 export function Combobox() {
     const [open, setOpen] = React.useState(false)
-    const [selectedChain, setSelectedChain] = React.useState<string>(baseSepolia.name)
+    const [selectedChain, setSelectedChain] = React.useState<string | null>(null)
 
     const setChain = useSetAtom(chainAtom)
 
@@ -63,7 +41,7 @@ export function Combobox() {
                 >
                     {selectedChain
                         ? chains.find((chain) => chain.value.name === selectedChain)?.label
-                        : "Select Chain"}
+                        : "select a chain"}
                     <ChevronsUpDown className="opacity-50" />
                 </Button>
             </PopoverTrigger>
